@@ -1,0 +1,24 @@
+<!--
+  Generated template for the HistoryPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Notification History</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item *ngFor='let trans of trans'> 
+    <h2 id="hd">{{trans.ATTRIBUTE}}</h2> 
+    <h6 id="sm">{{trans.REFERENCE}}</h6>
+    <h6 id="sm">{{trans.VALUE}}</h6>
+    <h6 id="sm">{{trans.DATE}},{{trans.YEAR}}&nbsp;&nbsp;{{trans.TIME}}</h6>
+  </ion-item>
+
+</ion-content>

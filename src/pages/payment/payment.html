@@ -1,0 +1,123 @@
+<!--
+  Generated template for the PaymentPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Credit Card Payment</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <ion-item>
+      <ion-label>Amount</ion-label>
+      <ion-select  interface="popover" [(ngModel)]="amount">
+        <div *ngFor = "let credit of credits; let i= index">
+          <ion-option value="{{credit.id}}">{{credit.value}}</ion-option>
+        </div>
+      </ion-select>
+    </ion-item>
+
+    <form action="/" method="post" id="payment-form">
+  
+    <div class="form-row">
+      <div id="card-element">
+        <!-- a Stripe Element will be inserted here. -->
+      </div>
+
+      <!-- Used to display Element errors -->
+      <div id="card-errors" role="alert"></div>
+    </div>
+
+    <button ion-button full>Proceed</button>
+      
+    </form>
+
+
+     <!-- <form [formGroup]="reg" (submit)="submit()" novalidate>
+        <ion-list>  
+          <ion-item>
+            <ion-label>Card Number</ion-label>
+            <ion-input type="text" formControlName = "cardNumb" placeholder="1111 2222 3333 4444" required></ion-input>
+          </ion-item>
+           <ion-item no-lines  *ngIf="!reg.controls.cardNumb.valid && (reg.controls.cardNumb.dirty)">
+          <div>
+            Please enter valid phone number
+          </div>
+          </ion-item> 
+           <ion-item>
+            <ion-label>Expire Month</ion-label>
+            <ion-select interface="month" formControlName='month'>
+                    <ion-option value="01">01</ion-option>
+                    <ion-option value="02">02</ion-option>
+                     <ion-option value="03">03</ion-option>
+                    <ion-option value="04">04</ion-option>
+                     <ion-option value="05">05</ion-option>
+                    <ion-option value="06">06</ion-option>
+                     <ion-option value="07">07</ion-option>
+                    <ion-option value="08">08</ion-option>
+                     <ion-option value="09">09</ion-option>
+                    <ion-option value="10">10</ion-option>
+                     <ion-option value="11">11</ion-option>
+                    <ion-option value="12">12</ion-option>
+                </ion-select>
+          </ion-item>
+           <ion-item no-lines  *ngIf="!reg.controls.month.valid && (reg.controls.month.dirty)">
+          <div>
+            Invalid Month 
+          </div>
+          </ion-item> 
+          <ion-item>
+            <ion-label>Expire Year</ion-label>
+            <ion-select interface="year" formControlName='year'>
+                    <ion-option value="2018">2018</ion-option>
+                    <ion-option value="2019">2019</ion-option>
+                     <ion-option value="2020">2020</ion-option>
+                    <ion-option value="2021">2012</ion-option>
+                     <ion-option value="2022">2022</ion-option>
+                    <ion-option value="2023">2023</ion-option>
+                     <ion-option value="2024">2024</ion-option>
+                    <ion-option value="2025">2025</ion-option>
+                     <ion-option value="2026">2026</ion-option>
+                    <ion-option value="2027">2027</ion-option>
+                     <ion-option value="2028">2028</ion-option>
+                    <ion-option value="2029">2029</ion-option>
+                </ion-select>
+          </ion-item>
+           <ion-item no-lines  *ngIf="!reg.controls.year.valid && (reg.controls.year.dirty)">
+          <div>
+            Invalid Year 
+          </div>
+          </ion-item> 
+          <ion-item>
+            <ion-label>CCV</ion-label>
+            <ion-input type="text" formControlName = "security" maxLength='4' required></ion-input>
+          </ion-item>
+           <ion-item no-lines  *ngIf="!reg.controls.security.valid && (reg.controls.security.dirty)">
+          <div>
+            Please enter valid CVC
+          </div>
+          </ion-item> 
+
+          <ion-item>
+            <ion-label>Names</ion-label>
+            <ion-input type="text" formControlName = "name"  required></ion-input>
+          </ion-item>
+           <ion-item no-lines  *ngIf="!reg.controls.name.valid && (reg.controls.name.dirty)">
+          <div>
+            Please enter valid Names
+          </div>
+          </ion-item> 
+      </ion-list>
+        <div>
+        <button ion-button color="secondary" block outline type = "submit" [disabled]="!reg.valid"> Confirm </button>
+        <button ion-button color="secondary" block outline type = "reset"> Clear </button>
+        </div>
+      </form> -->
+
+  </ion-content>

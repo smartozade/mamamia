@@ -1,0 +1,31 @@
+<!--
+  Generated template for the VoucherPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>UcallTel voucher</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <div id="top" text-center>
+    <h4> TopUp with Voucher Code </h4>
+  </div> 
+   <form [formGroup]="code" (submit)="submit()" novalidate>
+    <ion-item>
+      <ion-label>Voucher Code</ion-label>
+      <ion-input type="text" formControlName="voucher" ></ion-input>
+    </ion-item>
+    <div text-end>
+      <button ion-button primary type="sumbmit" [disabled]="!code.valid"> TopUp </button>
+    </div>  
+   </form>
+
+</ion-content>

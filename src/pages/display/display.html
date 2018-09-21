@@ -1,0 +1,29 @@
+<!--
+  Generated template for the DisplayPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>display</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-searchbar [(ngModel)]="searchTerm" [formControl]="searchControl" (ionInput)="onSearchInput()"></ion-searchbar>
+ 
+    <div *ngIf="searching" class="spinner-container">
+        <ion-spinner></ion-spinner>
+    </div>
+ 
+     <ion-item *ngFor = "let c of country; let i= index">      
+        <h3 (click)="coSelect(i)">&nbsp;{{c.name}} &nbsp; &nbsp; {{c.phonecode}} </h3>  
+          <!-- "https://www.countryflags.io/{{c.code}}/flat/40.png" -->  
+          <!-- <img src="http://www.geonames.org/flags/x/{{c.code}}.gif"  align='center'>          -->
+    </ion-item> 
+</ion-content>

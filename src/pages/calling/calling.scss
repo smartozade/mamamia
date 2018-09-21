@@ -1,0 +1,43 @@
+page-calling {
+    .calling{
+        align-content: center;
+        align-items: center;
+        background-color:color($colors, pale);
+    }
+    
+    ion-content{
+        align-self: center;
+        -ms-flex-item-align: center;
+        align-content: center;
+        align-items: center;
+        -webkit-text-fill-color:white;
+    }
+
+    img{
+        border-radius:50%;
+        width: 150px;
+        height: 150px;
+    }
+
+    #pick{
+        margin-top: 30px;
+        background-color: #33FF00;
+        border-radius: 50%;
+        padding: 20px;
+        margin-right: 20%;
+    }
+
+    #end{
+        margin-top:30px;
+        background-color: #ff0000;
+        border-radius: 80%;
+        border-radius: 50%;
+        padding: 20px;
+    }
+
+    h2{
+        margin-bottom: 20px;
+    }
+    
+
+}

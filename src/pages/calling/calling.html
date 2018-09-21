@@ -1,0 +1,40 @@
+<!--
+  Generated template for the CallingPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>calling</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding class="calling">
+  <div text-center> 
+    <img src="assets/img/1.png" >
+  </div>
+  <h2 text-center id="call"></h2>
+  <h2 text-center>{{navData}}</h2>
+  <div>    
+    <ion-label text-center id="con1"></ion-label>
+    <ion-label text-end id="con"> </ion-label>
+  </div>
+  <div *ngIf ='incoming' text-center>
+    <button id='pick' ion-button large start (click)="accept()"><ion-icon name='call'></ion-icon>
+    </button>  
+     <button id='end' ion-button large end (click)="closeModal()"><ion-icon name='call'></ion-icon>
+    </button>
+  </div>
+
+  <div *ngIf ='con' text-center>
+     <button id='end' ion-button large end (click)="closeModal()"><ion-icon name='call'></ion-icon>
+    </button>
+  </div>
+
+  <div *ngIf ='calling' text-center>
+     <button id='end' ion-button large end (click)="closeModal()"><ion-icon name='call'></ion-icon>
+    </button>
+  </div>
+</ion-content>

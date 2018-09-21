@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Contact
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let contact of list; let i=index" (click)='contactView(i)'>
+      <ion-avatar item-start>
+        <img *ngIf="contact?.photos" [src]="contact.photos[0].thumbnail"/>
+      </ion-avatar>
+
+        <p>{{ contact.displayName}}</p>
+        <p>{{ contact.phoneNumbers[0].value }} </p>
+    </button>
+  </ion-list> 
+
+ <!-- <ion-list>
+    <ion-item *ngFor="let contact of list">
+      <ion-avatar *ngIf="contact.image" item-start>
+        <img [src]="contact.image">
+      </ion-avatar>
+      <ion-label>{{contact.name}}</ion-label>
+      <ion-label>{{contact.number}}</ion-label>
+      <ion-icon name="call" item-right></ion-icon>
+      <ion-icon name="mail" item-right></ion-icon>
+    </ion-item>
+  </ion-list>   -->
+
+  <!-- <div padding>
+  <ion-segment [(ngModel)]="cat">
+    <ion-segment-button value="men">
+      Men
+    </ion-segment-button>
+    <ion-segment-button value="women">
+      Women
+    </ion-segment-button>
+    </ion-segment>
+</div>
+
+<div [ngSwitch]="cat">
+  <ion-list *ngSwitchCase="'men'">
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="img/men-image1.png">
+      </ion-thumbnail>
+      <h2>Cothing</h2>
+    </ion-item>
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="img/men-image2.png">
+      </ion-thumbnail>
+      <h2>Watches</h2>
+    </ion-item>
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="img/men-image3.png">
+      </ion-thumbnail>
+      <h2>Footwear</h2>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngSwitchCase="'women'">
+   <ion-item>
+      <ion-thumbnail item-left>
+        <img src="img/women-image1.png">
+      </ion-thumbnail>
+      <h2>Cothing</h2>
+    </ion-item>
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="img/women-image1.png">
+      </ion-thumbnail>
+      <h2>Watches</h2>
+    </ion-item>
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="/img/women-image1.png">
+      </ion-thumbnail>
+      <h2>Footwear</h2>
+    </ion-item>
+ </ion-list>
+</div> -->
+</ion-content>

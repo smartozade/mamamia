@@ -1,0 +1,30 @@
+<!--
+  Generated template for the TopupPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Topup</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div id="top" text-center>
+    <h4> TopUp your Account with Paypal</h4>
+  </div> 
+
+  <ion-item>
+      <ion-label>Amount</ion-label>
+      <ion-select  interface="popover" [(ngModel)]="amount">
+        <div *ngFor = "let credit of credits; let i= index">
+          <ion-option value="{{credit.id}}">{{credit.value}}</ion-option>
+        </div>
+      </ion-select>
+    </ion-item>
+  <div text-end>
+     <button ion-button primary (click)="topup()"[disabled]="!amount"> TopUp </button> 
+  </div>  
+
+</ion-content>

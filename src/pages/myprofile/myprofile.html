@@ -1,0 +1,68 @@
+<!--
+  Generated template for the MyprofilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>  
+    <ion-title>myprofile</ion-title>  
+  </ion-navbar>   
+ 
+</ion-header>
+
+<ion-content padding>
+  <div text-center id="user">    
+    <ion-avatar center>        
+      <img src='{{pathForImage(lastImage)}}' [hidden]="lastImage === null" (click)="presentActionSheet()">
+    </ion-avatar>  
+    <button ion-button default [hidden]="lastImage !== null" (click)="presentActionSheet()">Add Profile Picture!</button> 
+    <div *ngIf='upload'>
+       <button (click)='uploadImage()'>upload</button>
+    </div>
+  </div>
+<div *ngIf='size'>    
+<div>
+  <ion-list>
+    <ion-item>
+      <ion-label item-left>Name</ion-label>
+      <ion-input type="text" placeholder="{{fname}} &nbsp;{{lname}}" disabled text-end></ion-input>
+    </ion-item>
+  </ion-list>
+</div>
+
+  <div>
+    <ion-list>
+    <ion-item>
+      <p>UcallTel Account Information</p>
+    </ion-item>
+    <ion-item>
+      <ion-label item-start>
+        UcallTel Number
+      </ion-label>
+      <ion-input type="text" placeholder="{{ucalltel}}" disabled text-end></ion-input>
+    </ion-item>    
+    <ion-item>
+      <ion-label item-start>
+        Username
+      </ion-label>
+      <ion-input type="text" placeholder="{{username}}" disabled text-end></ion-input>
+    </ion-item>    
+    <ion-item>
+      <ion-label item-start>
+        Balance History
+      </ion-label>
+      <ion-input type="text" placeholder="{{userDetails.currency.symbol}}&nbsp;{{balance}}" disabled text-end></ion-input>
+    </ion-item>  
+    </ion-list>  
+  </div>  
+</div>
+<div text-center>
+  <ion-list>
+  <button ion-button danger full (click)='changePin()'>Change Password</button>
+  <button ion-button primary full (click)='updateProfile()'>Update Profile</button>
+  </ion-list>
+</div>
+</ion-content>
+
