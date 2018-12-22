@@ -37,6 +37,7 @@ searching:any = false;
           this.searching = false;
           this.setFilteredItems();
       });
+      console.log('ionViewDidLoad displayPage');
   }
  
   onSearchInput(){
@@ -50,9 +51,9 @@ searching:any = false;
 
   coSelect(i){
     if(this.page ==='HomePage'){
-    this.navCtrl.push(HomePage,{dial_code:this.country[i].phonecode, country:this.country[i].name, code:this.country[i].iso, cid:this.country[i].id});
+    this.navCtrl.push(HomePage,{dial_code:this.country[i].phonecode, country:this.country[i].name, code:this.country[i].iso, cid:this.country[i].id, rate:this.country[i].call_rate});
     }else{
-       this.navCtrl.push(SettingPage,{dial_code:this.country[i].phonecode, country:this.country[i].name, code:this.country[i].iso,  cid:this.country[i].id});
+       this.navCtrl.push(SettingPage,{dial_code:this.country[i].phonecode, country:this.country[i].name, code:this.country[i].iso,  cid:this.country[i].id, rate:this.country[i].call_rate});
     }
   }
 }

@@ -12,6 +12,11 @@ import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
 import {IonicStorageModule} from '@ionic/storage';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
+import { BackgroundMode } from '@ionic-native/background-mode';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import {Diagnostic} from '@ionic-native/diagnostic';
+import {Network} from '@ionic-native/network';
+
 
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
@@ -76,7 +81,7 @@ import { ConnectProvider } from '../providers/connect/connect';
     HttpModule,
     SuperTabsModule.forRoot(),
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(MyApp, {tabsPlacement:'bottom'}),
+    IonicModule.forRoot(MyApp,{ scrollAssist:false, autoFocusAssist:false, tabsPlacement:'bottom', navExitApp:false},),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -109,12 +114,16 @@ import { ConnectProvider } from '../providers/connect/connect';
     SplashScreen,
     File,
     Sim,
+    Network,
+    Diagnostic,
     Transfer,
     Camera,
     FilePath,
     FileTransfer, 
     FileTransferObject, 
     AndroidPermissions,
+    BackgroundMode,
+    LocalNotifications,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ConnectProvider
   ]

@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import {Validators,FormBuilder,FormGroup,FormControl} from '@angular/forms';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {MyprofilePage} from '../myprofile/myprofile';
+import {ConnectProvider} from '../../providers/connect/connect';
 import 'rxjs/add/operator/map';
 
 @IonicPage()
@@ -19,7 +20,7 @@ export class MessagingPage {
   public token:any;
   public server:any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http,private connect:ConnectProvider,
    public alertCtrl:AlertController) {
 
     this.details = JSON.parse(window.localStorage.getItem('userDetails'));
@@ -53,14 +54,14 @@ export class MessagingPage {
     this.http.put(this.server +"api/auth/password", data, options)
     .map(res=>res.json()).subscribe(result=>{
       if(result){
-          alert('password changed is successful');
+          this.connect.presentToast('password changed is successful');
           this.navCtrl.setRoot(MyprofilePage);
       }  else{
-        alert('invalid Password');
+        this.connect.errorMessage('invalid Password');
       } 
           },
         err=>{
-         alert('unable to connect');
+         this.connect.errorMessage('unable to connect please try again');
     })
   }
 

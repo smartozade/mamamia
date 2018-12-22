@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
 import {Validators, FormGroup, FormBuilder, FormControl} from '@angular/forms';
-import {HomePage} from '../home/home';
-import {NotificationPage} from '../notification/notification';
+import {LoginPage} from '../login/login';
 import {DisplayPage} from '../display/display';
+import {ConnectProvider} from '../../providers/connect/connect';
 import {Http, Headers, RequestOptions} from '@angular/http';
 
 import 'rxjs/add/operator/map';
@@ -27,7 +27,8 @@ export class SettingPage {
   public read:any;
   public server:any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http, private toastCtrl:ToastController, 
+    private alertCtrl:AlertController, private connect:ConnectProvider) {
     this.country = (navParams.get('country')) || 'Nigeria';
     this.code = (navParams.get('dial_code')) || '+234';
     this.flag = (navParams.get('code'))|| 'NG';
@@ -61,6 +62,16 @@ export class SettingPage {
     this.navCtrl.push(DisplayPage);
   }
 
+  report(text) {
+    let toast = this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'middle',
+      showCloseButton:true,
+    });
+    toast.present();
+  }
+
   parsePhone(phone){
     var pnumber = parseNumber(phone, {extended:true});
     alert(JSON.stringify(pnumber));
@@ -85,39 +96,34 @@ export class SettingPage {
       .map(res=>res.json()).subscribe(result=>{
       this.read = result;
       console.log(this.read);
-      this.navCtrl.push(NotificationPage,{
-          message:this.phoneNumber.value     
-        });
+      this.connect.showAlert('Registration Success', 'Verification code has been sent to ' +this.phoneNumber.value);
+      this.navCtrl.setRoot(LoginPage);      
       },
       err=>{
-        alert('error');
+        this.report('Error try again later');
       });
 
-      if(this.read){
-        this.navCtrl.push(NotificationPage,{
-          message:this.phoneNumber.value     
-        });
-      }
+      // if(this.read){
+      //   this.report('Verification code has been sent to  '+this.phoneNumber.value);
+      // }
     } else {
-      this.navCtrl.setRoot(SettingPage);
-      alert(this.phoneNumber.value +' is not a valid number in '+ this.country);
-
+      this.report(this.phoneNumber.value +' is not a valid number in '+ this.country);
     }
   }
-    sms(cnumb){
-      let headers = new Headers;
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
-      let options = new RequestOptions({headers: headers});
-      this.http.post(this.server +"api/auth/signup", cnumb, options)
-      .map(res=>res.json()).subscribe(result=>{
-       this.read = result;
-       console.log(this.read);
-      },
-      err=>{
-        alert('error');
-      });
-      return this.read;
+  sms(cnumb){
+    let headers = new Headers;
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    let options = new RequestOptions({headers: headers});
+    this.http.post(this.server +"api/auth/signup", cnumb, options)
+    .map(res=>res.json()).subscribe(result=>{
+      this.read = result;
+      console.log(this.read);
+    },
+    err=>{
+      this.connect.showAlert('Error', 'Unable to connect');
+    });
+    return this.read;
   }
 
 }

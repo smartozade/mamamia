@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import {Validators,FormBuilder,FormGroup,FormControl} from '@angular/forms';
 import {Http, Headers, RequestOptions} from '@angular/http';
-import {MyprofilePage} from '../myprofile/myprofile';
+import {ConnectProvider} from '../../providers/connect/connect';
 import {ConfigPage} from '../config/config';
 
 /**
@@ -27,7 +27,7 @@ export class NewMessagePage {
   public token:any;
   public server:any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder, public http:Http,private connect:ConnectProvider,
    public alertCtrl:AlertController,) {
 
     this.user = fm.group({
@@ -62,14 +62,14 @@ export class NewMessagePage {
     this.http.put(this.server +"api/user", data, options)
     .map(res=>res.json()).subscribe(result=>{
       if(result){
-          alert('profile Update Successfully');
+          this.connect.presentToast('profile Update Successfully');
           this.navCtrl.setRoot(ConfigPage);
       }  else{
-        alert('cant update your profile ');
+        this.connect.errorMessage('cant update your profile ');
       } 
           },
         err=>{
-         alert('unable to connect');
+         this.connect.errorMessage('unable to connect');
     })
   }
 

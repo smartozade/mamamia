@@ -1,9 +1,15 @@
 page-login {
     .bg{
-         width: 100%;
-        height: 100%;
-        background: #3ebffb;//linear-gradient(10deg,#4E5EFC,#4EE7FC);
+        border-radius:5%;
+        background: url("../assets/img/bg.jpg") no-repeat;//#3ebffb;//linear-gradient(10deg,#4E5EFC,#4EE7FC);
+        background-size: cover;
     }
+
+    .logo {
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-radius: 10%;
+      }
         .scroll-content{
             align-content: cneter;
             display: flex;
@@ -24,9 +30,13 @@ page-login {
         }
         .item{
             margin-bottom: 2px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(134, 109, 109, 0);
             border:medium none;
         }
+        .input,.icon,.label {
+            font-size: 1em;
+            color: color($colors, pale);
+          }
 
         #sign{
             text-align: center;

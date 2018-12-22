@@ -15,45 +15,46 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content padding>
-<div [ngSwitch]="pcalls">
-  <ion-list *ngSwitchCase="'dailed'" ngSelected="selected">
-    <ion-item-sliding *ngFor = "let past of history; let i= index">
+<ion-content class="bg" padding>
+  <div [ngSwitch]="pcalls">
+    <ion-list *ngSwitchCase="'dailed'" ngSelected="selected">
+      <ion-item-sliding *ngFor = "let past of dailed; let i= index">
+        <ion-item>
+          <ion-icon name="call" item-left (click)="tel(i)"></ion-icon>
+          {{past.caller_num}}
+          <h6 id='sm'>{{past.call_date}} &nbsp;&nbsp;</h6>
+          <h6 item-right>{{past.call_time}}</h6>
+        </ion-item>
+        <ion-item-options>
+          <ion-icon name="trash" item-right (click)="close(i)"></ion-icon> 
+        </ion-item-options> 
+      </ion-item-sliding>
+    </ion-list>
+    <ion-list *ngSwitchCase="'received'">
+      <ion-item-sliding *ngFor = "let past of received; let i= index">      
       <ion-item>
-        <ion-icon name="call" item-left (click)="tel(i)"></ion-icon>
-        {{past}}
+        <ion-icon name="call" item-left (click)="creceive(i)"></ion-icon> 
+        {{past.caller_num}}
+        <h6 id='sm'>{{past.call_date}}&nbsp;{{past.call_duration}} &nbsp;&nbsp;</h6>
+        <h6 item-right>{{past.call_time}}</h6>
       </ion-item>
-       <ion-item-options>
-         <ion-icon name="trash" item-right (click)="close(i)"></ion-icon> 
-      </ion-item-options> 
-    </ion-item-sliding>
+        <ion-item-options>
+          <ion-icon name="trash" item-right (click)=" receive(i)"></ion-icon> 
+        </ion-item-options> 
+      </ion-item-sliding>
   </ion-list>
-  <ion-list *ngSwitchCase="'received'">
-    <ion-item-sliding *ngFor = "let past of received; let i= index">      
-     <ion-item>
-       <ion-icon name="call" item-left (click)="creceive(i)"></ion-icon> 
-        <h3>{{past.NUMBER}}</h3>
-        <h6 id='sm'>{{past.DATE}},{{past.YEAR}} &nbsp;&nbsp;</h6>
-        <h6 item-right>{{past.TIME}}</h6>
-     </ion-item>
-      <ion-item-options>
-         <ion-icon name="trash" item-right (click)=" receive(i)"></ion-icon> 
-      </ion-item-options> 
-    </ion-item-sliding>
- </ion-list>
-  <ion-list *ngSwitchCase="'missed'">
-    <ion-item-sliding *ngFor = "let past of dailed; let i= index">
-      <ion-item>
-         <ion-icon name="call" item-left (click)="cdail(i)"></ion-icon>
-        <h3>{{past.NUMBER}}</h3>
-        <h6 id='sm'>{{past.DATE}},{{past.YEAR}} &nbsp;&nbsp;</h6>
-        <h6 item-right>{{past.TIME}}</h6>
-      </ion-item>
-      <ion-item-options>
-         <ion-icon name="trash" item-right (click)=" dail(i)"></ion-icon> 
-      </ion-item-options> 
-    </ion-item-sliding>
-  </ion-list>
-</div>
-
+    <ion-list *ngSwitchCase="'missed'">
+      <ion-item-sliding *ngFor = "let past of missed; let i= index">
+        <ion-item>
+          <ion-icon name="call" item-left (click)="cdail(i)"></ion-icon>
+          {{past.caller_num}}
+          <h6 id='sm'>{{past.call_date}} &nbsp;&nbsp;</h6>
+          <h6 item-right>{{past.call_time}}</h6>
+        </ion-item>
+        <ion-item-options>
+          <ion-icon name="trash" item-right (click)=" dail(i)"></ion-icon> 
+        </ion-item-options> 
+      </ion-item-sliding>
+    </ion-list>
+  </div>
 </ion-content>

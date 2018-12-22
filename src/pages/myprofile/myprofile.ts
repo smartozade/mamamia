@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController, ToastController, Platform, Loading, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ActionSheetController, Platform, Loading, LoadingController } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 import { Transfer, FileUploadOptions, TransferObject } from '@ionic-native/transfer';
 import { FilePath } from '@ionic-native/file-path';
@@ -30,15 +30,14 @@ export class MyprofilePage {
   public lname:any;
   
   constructor(public navCtrl: NavController, public navParams: NavParams, private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath, 
-    public actionSheetCtrl: ActionSheetController, public toastCtrl: ToastController, public platform: Platform, public loadingCtrl: LoadingController,
+    public actionSheetCtrl: ActionSheetController, public platform: Platform, public loadingCtrl: LoadingController,
     public connect:ConnectProvider, public http:Http) {
       this.userDetails = JSON.parse(window.localStorage.getItem('userDetails'));
       this.balance = this.userDetails.credits ||'0.00';
       this.photo = this.userDetails.photo;
       this.lastImage = localStorage.getItem('lastImage');
-      console.log(this.balance);
       this.username = this.userDetails.username;
-      this.ucalltel = this.userDetails.extension.number;
+      this.ucalltel = this.userDetails.phonenumber;
       this.fname = this.userDetails.first_name;
       this.lname = this.userDetails.last_name;
    
@@ -106,7 +105,7 @@ export class MyprofilePage {
       this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
     }
   }, (err) => {
-    this.presentToast('Error while selecting image.');
+    this.connect.presentToast('Error while selecting image.');
   });
 }
 
@@ -123,18 +122,10 @@ private copyFileToLocalDir(namePath, currentName, newFileName) {
   this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
     this.lastImage = newFileName;
   }, error => {
-    this.presentToast('Error while storing file.');
+    this.connect.presentToast('Error while storing file.');
   });
 }
  
-private presentToast(text) {
-  let toast = this.toastCtrl.create({
-    message: text,
-    duration: 3000,
-    position: 'top'
-  });
-  toast.present();
-}
  
 // Always get the accurate path to your apps folder
 public pathForImage(img) {
@@ -177,13 +168,13 @@ public uploadImage() {
   fileTransfer.upload(photo, url, options)
     .then((res) => {
       this.loading.dismissAll()
-      this.presentToast('Image succesful uploaded.');
+      this.connect.presentToast('Image succesful uploaded.');
       localStorage.setItem('lastImage', this.lastImage);
       
       this.upload = false;
     }).catch((err) => {
       this.loading.dismissAll()
-      this.presentToast('Error while uploading file.');
+      this.connect.presentToast('Error while uploading file.');
       console.log(err);
     })
 

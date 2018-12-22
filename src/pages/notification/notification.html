@@ -1,24 +1,34 @@
-<!--
-  Generated template for the NotificationPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
+ 
 <ion-header>
 
   <ion-navbar>
-    <ion-title>VERIFY YOUR NUMBER</ion-title>
+    <ion-title>Settings</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-
-<ion-content padding>
-  <div text-center>
-    <h4>Verification code has been sent to </h4>
-    <h4>{{phone}}</h4>
-  </div>
-  <div text-center id="sub">
-    <button ion-button full color='primary' (click)='login()' small> Login</button>
-  </div>
+<ion-content class="bg" padding>
+  <!-- App settings-->
+  <ion-item-group>
+    <ion-item-divider>App Settings</ion-item-divider>
+    <ion-item>
+      <ion-label>Language</ion-label>
+     <ion-label text-end>English (US)</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Currency</ion-label>
+      <ion-label text-end>{{currency}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Clear auto-Topup Data</ion-label>
+      <ion-checkbox checked="false" item-right></ion-checkbox>
+    </ion-item>
+  </ion-item-group>  
+  <!-- Support-->
+  <ion-item-group>
+    <ion-item-divider>Support</ion-item-divider>
+    <ion-item>
+      <span tapable (click)='contact()'>Contact Us</span>
+    </ion-item>
+  </ion-item-group>  
 </ion-content>

@@ -1,7 +1,16 @@
 page-notification {
 
-    #sub{
-        margin-top: 25%;
+    .bg {
+        // setting style
+        .card {
+          margin-top: 1rem;
+          margin-bottom: 2rem;
+          overflow: hidden;
+        }
+    }
+
+    ion-item-divider{
+        background-color: #4E5EFC;
     }
 
 }

@@ -7,18 +7,47 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Notification History</ion-title>
+    <ion-title>Feedback</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-
 <ion-content padding>
-  <ion-item *ngFor='let trans of trans'> 
-    <h2 id="hd">{{trans.ATTRIBUTE}}</h2> 
-    <h6 id="sm">{{trans.REFERENCE}}</h6>
-    <h6 id="sm">{{trans.VALUE}}</h6>
-    <h6 id="sm">{{trans.DATE}},{{trans.YEAR}}&nbsp;&nbsp;{{trans.TIME}}</h6>
-  </ion-item>
 
+  <div *ngIf='contact'>
+    <form [formGroup]="reg" (submit)="submit()" novalidate>
+      <ion-item>
+        <ion-label>Feedback</ion-label>
+        <ion-textarea placeholder="Enter a description" formControlName="feedback" rows="3" maxLength="500"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="text" formControlName="email" ></ion-input>
+      </ion-item>
+      <button ion-button color="pale" full type = "submit" [disabled]="!reg.valid"> Send Message </button>
+
+    </form>
+  </div>
+ <ion-list class="no-margin" *ngIf='message'>
+    <ion-list-header class="no-margin">
+      <ion-icon name="notifications" color="pale"></ion-icon>
+      <span ion-text color="pale" >Notifications</span>
+    </ion-list-header>
+    <button ion-item color="pale" tappable (click)="close()">
+      <ion-icon name="mail"></ion-icon>
+      New booking success!
+    </button>
+    <button ion-item color="pale" tappable (click)="close()">
+      <ion-icon name="mail"></ion-icon>
+      Activity rescheduled
+    </button>
+    <button ion-item  tappable (click)="close()">
+      <ion-icon name="mail-open" color="secondary"></ion-icon>
+      <span ion-text color="pale">Activity rescheduled</span>
+    </button>
+    <button ion-item  tappable (click)="close()">
+      <ion-icon name="mail-open" color="secondary"></ion-icon>
+      <span ion-text color="pale">Activity rescheduled</span>
+    </button>
+  </ion-list>
 </ion-content>

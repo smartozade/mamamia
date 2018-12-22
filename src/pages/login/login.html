@@ -8,52 +8,38 @@
   <div id="custom-overlay" [style.display]="splash ? 'flex': 'none'">
   <div class="flb">
     <div class="Aligner-item Aligner-item--top"></div>
-    <img src="./assets/img/Telvida.png">
+    <img src="./assets/img/ucall.png">
     <div class="Aligner-item Aligner-item--bottom"></div>
   </div>
 </div>
-  <!-- <ion-navbar>
-    <ion-title>login</ion-title>
-  </ion-navbar> -->
 </ion-header>
 <ion-content class="bg" padding>
-      <div text-center class="logo-container">
-      <img class="login-logo" src="./assets/img/Telvida.png" alt="Telvida Logo">
-        <!-- <h4>Sign in to your UlcalTell account</h4> -->
+      <div class='logo' text-center>
+        <img src="./assets/img/ucall.png" alt="UcallTel Logo" width="50%" height="50%">
       </div>
       <form [formGroup]="reg" (submit)="submit()" novalidate>
-        <ion-list>  
-          <ion-item>
-            <ion-label><ion-icon name="person" item-left></ion-icon></ion-label>
-            <!-- <ion-input type="text" value="agira" placeholder="Username" formControlName="username"></ion-input> -->
-            <ion-input type="text" formControlName = "username" placeholder="Phone Number" required></ion-input>
-          </ion-item>
-           <ion-item no-lines  *ngIf="!reg.controls.username.valid && (reg.controls.username.dirty)">
-          <div>
-            Please enter valid Username
-          </div>
-          </ion-item> 
+        <ion-item>
+          <ion-label><ion-icon name="person" item-left></ion-icon></ion-label>
+          <ion-input type="text" formControlName = "username" placeholder="Phone Number" required></ion-input>
+        </ion-item>
+        <ion-item no-lines  *ngIf="!reg.controls.username.valid && (reg.controls.username.dirty)">
+          Please enter valid Username
+        </ion-item> 
 
-           <ion-item>
-            <ion-label><ion-icon name="lock" item-left></ion-icon></ion-label>
-            <!-- <ion-input type="text" value="agira" placeholder="Username" formControlName="username"></ion-input> -->
-            <ion-input type="password" formControlName = "password" placeholder="password" required></ion-input>
-          </ion-item>
-           <ion-item no-lines  *ngIf="!reg.controls.password.valid && (reg.controls.password.dirty)">
-          <div>
-            Invalid Password 
-          </div>
-          </ion-item> 
-        </ion-list>
+        <ion-item>
+          <ion-label><ion-icon name="lock" item-left></ion-icon></ion-label>
+          <ion-input type="password" formControlName = "password" placeholder="password" required></ion-input>
+        </ion-item>
+        <ion-item no-lines  *ngIf="!reg.controls.password.valid && (reg.controls.password.dirty)">
+          Invalid Password 
+        </ion-item> 
         <div>
-          <button ion-button color="energy" full type = "submit" [disabled]="!reg.valid"> Login </button>
-          <h4>&nbsp;</h4>
-           <ion-label (click)='pass_reset()'> Forget Password</ion-label>
+          <button ion-button color="pale" full type = "submit" [disabled]="!reg.valid"> Login </button>
+           <p text-right ion-text color='pale' tappable (click)='pass_reset()'> Forget Password</p>
         </div>
       </form>
-      <div id="sign">
-        <h6>Don't have account yet?  </h6>
-        <button ion-button color='energy' (click)='register()' small>SignUp</button>
+      <div text-center margin-top>
+          <span ion-text color="pale" tappable (click)="register()">Don't have account yet?<strong>Sign up</strong></span>
       </div>
     </ion-content>
 

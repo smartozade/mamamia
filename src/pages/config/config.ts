@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {SettingPage} from '../setting/setting';
+import { File } from '@ionic-native/file';
+import {NotificationPage} from '../notification/notification';
 import {MyprofilePage} from '../myprofile/myprofile';
 import {TopupPage} from '../topup/topup';
 import {PaymentPage} from '../payment/payment';
@@ -23,16 +24,20 @@ export class ConfigPage {
   public size:boolean = true;
   public topUp:any = []; 
   public photo:any;
+  public img;
+  public lastImage;
   showLevel1 = null;
   showLevel2 = null;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public connect:ConnectProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public connect:ConnectProvider, private file:File) {
     this.topUp = [
       {"title":"TopUp","name":"UcallTel Voucher","name1":"Credit Card","name2":"PayPal Account"}
     ]; 
     this.user =JSON.parse(window.localStorage.getItem('userDetails'));
     this.username = this.user.phonenumber;
-    this.photo = this.user.photo;
+    this.lastImage = localStorage.getItem('lastImage');
+    this.img = this.file.dataDirectory + this.lastImage;
+    this.photo = this.user.photo || this.img;
     if(this.username){
       this.size = true;
     } 
@@ -41,7 +46,7 @@ export class ConfigPage {
   }
 
    setting(){
-    this.navCtrl.push(SettingPage);
+    this.navCtrl.push(NotificationPage);
   }
 
   profile(){
@@ -65,7 +70,7 @@ notification(){
 }
 
 logout(){
-  window.localStorage.clear();
+  localStorage.removeItem('username');
   this.navCtrl.setPages([
     {page:LoginPage}
   ]);
@@ -112,7 +117,8 @@ creditp(){
   }
 
   ionViewWillEnter() {
-    this.connect.getUser();
+    // this.connect.getUser();
+
   } 
 
 }

@@ -1,81 +1,101 @@
-<!-- <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
-</ion-header> -->
-
 <ion-content event class="bg">
-  <!-- <audio id="remoteAudio"></audio> -->
+   <audio id="remoteAudio"></audio> 
   <audio id="localAudio"></audio>
  
     <ion-item class="bg">  
-      <img src="http://www.geonames.org/flags/x/{{cflags}}.gif" height="30" width="30"  align='center' item-right>   
-      <h5 item-right (click)="selCountry()">{{country}}</h5>
+      <img src="http://www.geonames.org/flags/x/{{cflags}}.gif" height="30" width="30" item-left (click)="selCountry()">   
+      <h5 item-left (click)="selCountry()">{{country}}</h5>
+      <h5 item-end>{{status}}</h5>      
    </ion-item> 
     <ion-item>
-      <ion-label floating>{{code}}</ion-label>
-      <ion-input [(ngModel)]="result" type="tel" value="{{code}}" disabled='true' clearInput> </ion-input>
+        <ion-icon *ngIf='result' tappable name="backspace" item-right (click)="btnCancel()" (press)="btnClear()"></ion-icon>
+      <ion-input [(ngModel)]="result" type="tel" value="{{code}}" placeholder='{{code}}' disabled='true' clearInput text-center> </ion-input>
     </ion-item>
+    <video id="webcam" autoplay="autoplay" hidden> </video>
+    <!-- <audio id="webcam" autoplay="autoplay"></audio>  -->
 
   <div class="btn" text-center>
-    <div>
-      <button (click)="btnClick(1)"  id="page-button1" ion-button outline large>
-        1
-      </button>
-      <button (click)="btnClick(2)" id="page-button2" ion-button outline large>
-        2
-      </button>
-      <button (click)="btnClick(3 )" id="page-button3" ion-button outline large>
-        3
-      </button>
-    </div>
-    <div>
-      <button (click)="btnClick(4)"  id="page-button4" ion-button outline large>
-        4
-      </button>
-      <button (click)="btnClick(5)" id="page-button5" ion-button outline large>
-        5
-      </button>
-      <button (click)="btnClick(6)" id="page-button6" ion-button outline large>
-        6
-      </button>
-    </div>
-    <div>
-      <button (click)="btnClick(7)"  id="page-button7" ion-button outline large>
-        7
-      </button>
-      <button (click)="btnClick(8)" id="page-button8" ion-button outline large>
-        8
-      </button>
-      <button (click)="btnClick(9)" id="page-button9" ion-button outline large>
-        9
-      </button>
-    </div>
-    <div>
-      <button (click)="btnClick('*')"  id="page-button*" ion-button outline large>
-        *
-      </button>
-      <button (click)="btnClick(0)" id="page-button0" ion-button outline large>
-        0
-      </button>
-      <button (click)="btnClick('#')" id="page-button#" ion-button outline large>
-        #
-      </button>
-    </div>
-    <div>
-      <button (click)="btnCancel()" id="page-buttonX" ion-button outline large>
-        <ion-icon name="backspace"></ion-icon>
-      </button>
-
-      <button (click)="btnCall()" ion-button id="pick">
-        <ion-icon name='call'></ion-icon>
-      </button>
-
-      <button (click)="btnClear()" id="page-button5" ion-button outline large>
-        <ion-icon name="close-circle"></ion-icon>
-      </button>
-    </div>  
-      <!-- <button ion-button (click)='getUser()'> Send </button>   -->
+    <ion-grid style="width:80%; height:70%">
+      <ion-row>
+        <ion-col>
+          <button (click)="btnClick(1)"  id="page-button1" ion-button outline large>
+            1
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(2)" id="page-button2" ion-button outline large>
+            2
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(3 )" id="page-button3" ion-button outline large>
+            3
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button (click)="btnClick(4)"  id="page-button4" ion-button outline large>
+              4
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(5)" id="page-button5" ion-button outline large>
+            5
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(6)" id="page-button6" ion-button outline large>
+            6
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button (click)="btnClick(7)"  id="page-button7" ion-button outline large>
+              7
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(8)" id="page-button8" ion-button outline large>
+            8
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(9)" id="page-button9" ion-button outline large>
+              9
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button (click)="btnClick('*')"  id="page-button*" ion-button outline large>
+            *
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick(0)" (press)="btnClick('+')" id="page-button0" ion-button outline large>
+            0
+          </button>
+        </ion-col>
+        <ion-col>
+          <button (click)="btnClick('#')"  id="page-button#" ion-button outline large>
+            #
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <button (click)="btnCall()" ion-button id="pick">
+            <ion-icon name='call'></ion-icon>
+          </button>
+          <p *ngIf='result' text-right>{{call_rate}}</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div>
+    <h4></h4>
   </div>
   
 </ion-content>

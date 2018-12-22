@@ -3,27 +3,40 @@ import { NavController } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Contact, ContactFieldType, Contacts, IContactField, IContactFindOptions } from "@ionic-native/contacts";
 import {ContactViewPage} from '../contact-view/contact-view';
+import {FormControl} from '@angular/forms';
+import {ConnectProvider} from '../../providers/connect/connect';
 @Component({
   selector: 'page-contact',
   templateUrl: 'contact.html'
 })
 export class ContactPage {
   list = [];
-  cat: string = "men"; // default button
-  constructor(public navCtrl: NavController, private contacts:Contacts, private sanitizer: DomSanitizer) {
-    contacts.find(['displayName', 'phoneNumbers', 'photos'], {multiple: true})
-      .then((contacts) => {
-        for (var i=0 ; i < contacts.length; i++){
-          if(contacts[i].displayName !== null) {
-          this.list.push(contacts[i]);
-          }else{
-            continue;
-          }
-        }
-      }).catch(err=>{
-        console.log('Error');
+  contact:any;
+  searchTerm: string = '';
+  searchControl: FormControl;
+  items:any;
+  searching:any = false;
+  constructor(public navCtrl: NavController, private contacts:Contacts, private sanitizer: DomSanitizer, public connect:ConnectProvider) {
+    this.searchControl = new FormControl();
 
-      });  
+    // this.list = JSON.parse(window.localStorage.getItem('contacts'));
+  }
+
+  ionViewDidLoad(){  
+   
+    this.getContacts();
+  }
+
+  ionViewWillEnter() {
+    // this.getContacts();
+  }
+
+   onSearchInput(){
+      this.searching = true;
+  }
+
+   setFilteredItems() { 
+      this.contact = this.connect.filterItems(this.searchTerm);
   }
 
   getContacts(): void {
@@ -41,11 +54,13 @@ export class ContactPage {
               contact["image"] = this.sanitizer.bypassSecurityTrustUrl(contacts[i].photos[0].value);
               console.log(contact);
             } else {
-              contact["image"] = "assets/dummy-profile-pic.png";
+              contact["image"] = "assets/img/1.png";
             }
             this.list.push(contact);
+
           }
         }
+        // localStorage.setItem('contacts',JSON.stringify(this.list));
     });
   }
 

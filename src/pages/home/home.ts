@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController, NavParams } from 'ionic-angular';
+import { NavController, ModalController, NavParams, Platform } from 'ionic-angular';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
-import {MessagePage} from '../message/message';
 import {CallingPage} from '../calling/calling';
 import {DisplayPage} from '../display/display';
 import {ConnectProvider} from '../../providers/connect/connect';
+import { BackgroundMode } from '@ionic-native/background-mode';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import {Diagnostic} from '@ionic-native/diagnostic';
 import { Events } from 'ionic-angular';
 import {Storage} from '@ionic/storage';
 import {Http, Headers, RequestOptions} from '@angular/http';
 
-import * as SIP from 'sip.js';
-
+declare var $:any;
+declare var window:any;
+declare var AudioToggle:any;
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -29,153 +32,131 @@ export class HomePage {
   public userDetails:any;
   public try:any;
   public server:any;
+  notificationAlreadyReceived = false;
+  verto:any;
+  currentCall:any;
+  callbacks:any; 
+  ring;
+  callerId;
+  status:any= 'Offline';
+  call_rate;
+  net;
 
-  constructor(public navCtrl: NavController, public modal:ModalController, public connect:ConnectProvider, public events:Events,
-  public storage:Storage, public navParams: NavParams, public http:Http, private androidPermissions:AndroidPermissions) {
-    this.country = navParams.get('country') || 'Where do you want to call?';
-    this.code = navParams.get('dial_code')|| '';
-    this.flag = navParams.get('code')||'ng';
-    this.cflags = this.flag.toLowerCase();
-    var token = window.localStorage.getItem('userToken');
-    this.user = window.localStorage.getItem('us');
-    this.pass = window.localStorage.getItem('pa');
-    this.userDetails = JSON.parse(window.localStorage.getItem('userDetails'));
-    console.log(this.user);
-    console.log(this.pass);
-    console.log(this.userDetails);
-    this.config = this.connect.registration(this.user,this.pass);
+  constructor(public navCtrl: NavController, public modal:ModalController, public connect:ConnectProvider, public events:Events,public platform:Platform,
+    public localNotifications:LocalNotifications,  public storage:Storage, public navParams: NavParams, public http:Http, private androidPermissions:AndroidPermissions, 
+    public backgroundMode:BackgroundMode,  public diagnostic:Diagnostic) {
 
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT).then(
-      result => console.log('Has permission?',result.hasPermission),
-      err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
-    );
-
-    this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);
-
-     var constraints = { audio: true, video:false}; 
-
-
-    // navigator.mediaDevices.getUserMedia(constraints)
-    // .then(function(stream) {
-    //   /* use the stream */
-    // })
-    // .catch(function(err) {
-    //   /* handle the error */
-    // });
-
-
-    // var Med = navigator.mediaDevices.getUserMedia(constraints);
-
- var Med =  navigator.mediaDevices.getUserMedia(constraints)
-  .then(function(mediaStream) {
-    var audio = document.querySelector('audio');
-    audio.srcObject = mediaStream;
-    // audio.onloadedmetadata = function(e) {
-    //   audio.play();
-    // };
-  })
-  .catch(function(err) { 
-    console.log(err.name + ": " + err.message); }); 
-
-
-
-
-    var RTCPeerConnection: {   
-     new (configuration: RTCConfiguration): RTCPeerConnection;
-      prototype: RTCPeerConnection;
-    };
-
-
-    this.ua = new SIP.UA(this.config, RTCPeerConnection);
-    var self = this;
-    this.ua.on('invite', function(session) {
-      console.log(session);
-      // alert(session.remoteIdentity.displayName);
-      var dial = {message:session.remoteIdentity.displayName};
-      window.localStorage.setItem('category','inbound');
-      var myModal = self.modal.create(CallingPage, dial);
-      myModal.present();  
-
-      
-
-      //bye or terminate event
-      session.on('bye', function(){
-        alert('bye');
-        var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
-        }
+    platform.ready().then(() => {
+      this.backgroundMode.on('activate').subscribe(() => {
+        console.log('activated');
+        this.backgroundMode.overrideBackButton();
       });
-
-      //drop the ongoing call event
-      session.on('rejected', function(){
-        alert('rejected');
-        var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
+      this.getPermission();
+      this.backgroundMode.enable();
+      this.backgroundMode.overrideBackButton();
+      // this.backgroundMode.excludeFromTaskList();s
+    });
+    this.connect.connection();
+    this.callbacks = {
+      onMessage: function(verto, dialog, msg, data) {
+       console.error("msg ", msg);
+       console.error("data ", data);  
+      },
+      onEvent: function(v, e) {
+       console.error("GOT EVENT", e);
+      },
+      onWSLogin: (verto, success)=>{
+        console.log('Login success', success);
+        if (success) {
+          this.events.publish('status', 'Online');
+        }else{
+          this.events.publish('status', 'Offline');
         }
-      });
 
-      //cancel event
-       session.on('cancel', function(){
-         alert('cancel event');
-        var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
+      },
+      onDialogState: (d) => {
+        console.log(d);
+        this.callerId = d.params.caller_id_number;
+        this.currentCall = d;
+        if(d.state.name =='ringing'){
+          this.backgroundMode.unlock();
+          this.backgroundMode.wakeUp();
+          window.plugins.bringtofront();
+          this.ring.loop = true;
+          this.ring.play();
+          this.receive();
+        }  else if((d.state.name =='destroy')||(d.state.name =='hangup')){
+          this.ring.pause();
+          this.events.publish('closed', 'closed');
+        }else if(d.gotAnswer){
+          this.events.publish('accepted', 'accpted'); 
         }
-      });
+      },  
+     };
+     this.ring = new Audio('assets/sounds/bell_ring2.wav');
 
-      myModal.onDidDismiss(() => {
-        alert(session.status);
-      if((session.status !== 9)&&(session.status !== 4 )){
-        session.bye();
-        session.removeListener('invite',()=>{
-          console.log('mamamia');
-        });
-        window.localStorage.setItem('counter','true');
-      }else if(session.status == 4){
-        session.terminate();
-        window.localStorage.setItem('counter','true');
-      }
-      window.localStorage.setItem('counter','false');
+     this.userDetails = JSON.parse(window.localStorage.getItem('userDetails'));
      
+    this.country = navParams.get('country') || this.userDetails.country.name;
+    this.code = navParams.get('dial_code')|| this.userDetails.country.phonecode;
+    this.code = this.code.slice(1);
+    this.flag = navParams.get('code')||this.userDetails.country.iso;
+    this.cflags = this.flag.toLowerCase();
+    this.call_rate =  navParams.get('rate') ||this.userDetails.country.call_rate;
+    this.call_rate = '$'+ this.call_rate + '/min';
+    this.user =window.localStorage.getItem('us');
+    this.pass = window.localStorage.getItem('pa');
+    console.log(this.user);
+   
+    this.config = this.connect.registration(this.user,this.pass);
+    this.verto = new $.verto(this.config,this.callbacks); 
+    this.events.subscribe('status', (event_data)=>{
+      this.status = event_data;
+    });
+    console.log(this.status);
+    this.events.subscribe('speakerOn', (event_data)=>{
+      AudioToggle.setAudioMode(AudioToggle.SPEAKER);
+    });
+    this.events.subscribe('speakerOff', (event_data)=>{
+      AudioToggle.setAudioMode(AudioToggle.NORMAL);
+    });    
+  }
+
+  receive(){
+    var self = this;
+    var dial = {message:this.callerId};
+    window.localStorage.setItem('category','inbound');
+    var myModal = this.modal.create(CallingPage, dial);
+    myModal.onDidDismiss(() => {
+      self.currentCall.hangup();
+    }); 
+    myModal.present();      
+     self.events.subscribe('received', (event_data) => {
+       this.ring.pause();
+        self.currentCall.answer();
+    }); 
+    self.events.subscribe('onMute', (event_data) => {
+      self.currentCall.mute("off");
     }); 
 
-      self.events.subscribe('received', (event_data) => {
-           session.accept();   
-      }); 
-      
+    self.events.subscribe('unMute', (event_data) => {
+      self.currentCall.mute("on");
+    }); 
+
+    self.events.subscribe('onHold', (event_data) => {
+      self.currentCall.hold();
+    }); 
+
+    self.events.subscribe('unHold',(event_data)=>{
+      self.currentCall.unhold();
     });
-
-    var options = {
-
-      media:{
-              constraints:{
-                audio: true,
-                video: false,
-              },
-              render:{
-                remote:{
-                  audio: document.getElementById('remoteAudio')
-                },
-
-                local:{
-                  audio: document.getElementById('localAudio')
-                }
-              }
-      }
-    };      
-    
   }
 
    ionViewDidLoad(){  
     this.server = localStorage.getItem('server');
     this.try = window.localStorage.getItem('us');
-    if(!this.try){
-     this.connect.getUser();
-    }
     window.localStorage.setItem('counter','false');
-    this.timeZone();
+    // this.timeZone();
   }
 
    btnClick(btn){
@@ -192,75 +173,50 @@ export class HomePage {
 
   btnCall(){
     var self = this;
+    var net = window.localStorage.getItem('network');
+    console.log(net);
     this.calls.unshift(this.result);
-    window.localStorage.setItem('Calls', JSON.stringify(this.calls));
     window.localStorage.setItem('category','outbound');
-    this.events.publish('log:update', this.result);
-    var session = this.connect.call(this.ua,this.result, this.result);
-    console.log(session);
-    
-    session.on('accepted', function(){
-      self.events.publish('accepted', 'accpted');
-      // alert('the call has being picked');
-    });
-    session.on('rejected', function(){
-      alert('call rejected/dropped');
-      var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
-        }
-    }); 
-    session.on('failed', function(){
-      alert('call failed/failed');
-      var counter = window.localStorage.getItem('counter');
-      if(counter === 'false'){
-        self.events.publish('closed', 'closed');
-      }
-    }); 
+    var number = window.localStorage.getItem("phone");
+    if(this.result === number){
+      this.connect.presentToast('You cannot call yourself');
+    }else if(this.net==='false'){
+     this.connect.presentToast('No internet connection');   
+    }else{
+      this.events.publish('log:update', this.result);
+      this.connect.Calls(this.result,this.currentCall,this.verto,this.user)
+      var dial = {message:this.result};
+      var myModal = this.modal.create(CallingPage, dial);
+      myModal.onDidDismiss(() => {
+        self.currentCall.hangup();
+        self.currentCall = null;
+      }); 
+      myModal.present();  
+      self.events.subscribe('received', (event_data) => {
+        self.currentCall.answer();
+      }); 
+      self.events.subscribe('onMute', (event_data) => {
+        self.currentCall.mute("off");
+      }); 
 
-    //cancel event
-       session.on('cancel', function(){
-         alert('cancel event');
-        var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
-        }
-      });
+      self.events.subscribe('unMute', (event_data) => {
+        self.currentCall.mute("on");
+      }); 
 
-      //bye or terminate event
-      session.on('bye', function(){
-        var counter = window.localStorage.getItem('counter');
-        if(counter === 'false'){
-          self.events.publish('closed', 'closed');
-        }
-      });
+      self.events.subscribe('onHold', (event_data) => {
+        self.currentCall.hold();
+      }); 
 
-    var dial = {message:this.result};
-    var myModal = this.modal.create(CallingPage, dial);
-    myModal.onDidDismiss(() => {
-      if((session.status !== 9)&&(session.status !== 0 )){
-        session.bye();
-        window.localStorage.setItem('counter','true');
-      }else if(session.status == 0){
-        session.terminate();
-        window.localStorage.setItem('counter','true');
-      }
-      window.localStorage.setItem('counter','false');
-     
-    }); 
-    myModal.present();      
-    this.result = this.code + '';
-  }
-
-
-  con(){
-    this.connect.registration(this.user, this.pass);
-    var ua = new SIP.UA(this.config);
+      self.events.subscribe('unHold',(event_data)=>{
+        self.currentCall.unhold();
+      });    
+    }
+    this.result = this.code;
   }
   
   normalCall(){
     this.calls.push(this.result);
-    window.localStorage.setItem('Calls', JSON.stringify(this.calls));
+    // window.localStorage.setItem('Calls', JSON.stringify(this.calls));
     this.events.publish('log:update', this.result);
   }
 
@@ -276,8 +232,7 @@ export class HomePage {
       Object.keys(tabs).map((key) => {
         tabs[ key ].style.transform = 'translateY(0)';
       });
-    } // end if
-
+    } 
     this.connect.getUser();
   } 
   
@@ -291,16 +246,43 @@ export class HomePage {
     this.http.get(this.server +"api/timezones", options)
     .map(res=>res.json()).subscribe(result=>{
       if(result){
-        
-        console.log(result.data);
-       
+        // console.log(result.data);
       } else{
-        alert('cant get your timezones');
+        this.connect.errorMessage('cant get your timezones');
       } 
           },
         err=>{
-         alert('unable to connect');
+         this.connect.errorMessage('unable to connect please check your connection');
     })
   }
+
+   showNotification () {
+    this.localNotifications.schedule({
+      title:'Hello from Telvida',
+      text: 'Notification from UcallTel App',
+      foreground:true
+
+    });
+
+    this.notificationAlreadyReceived = true;
+  }
+
+  getPermission() {
+    this.diagnostic.getPermissionAuthorizationStatus(this.diagnostic.permission.RECORD_AUDIO).then((status) => {
+      console.log(`AuthorizationStatus`);
+      console.log(status);
+      if (status != this.diagnostic.permissionStatus.GRANTED) {
+        this.diagnostic.requestRuntimePermission(this.diagnostic.permission.RECORD_AUDIO).then((data) => {
+          console.log(`getSipAuthorizationStatus`);
+          console.log(data);
+        })
+      } else {
+        console.log("We have the permission");
+      }
+    }, (statusError) => {
+      console.log(statusError);
+    });
+  }
+
 
 }

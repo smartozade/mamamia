@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>VERIFY YOUR NUMBER</ion-title>
+    <ion-title>Verify Your Number</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -15,7 +15,7 @@
   <h4 text-center>Verify your Number to let us make sure you're you</h4>
   <h4>&nbsp; </h4>
       <div text-center class="logo-container" (click)='selectCountry()'>
-      <img class="logo" src="http://www.geonames.org/flags/x/{{cflags}}.gif"  align='center'>
+      <img class="logo" src="http://www.geonames.org/flags/x/{{cflags}}.gif">
         <ion-icon name="arrow-dropdown-circle" item-left></ion-icon>
         <h4>&nbsp; </h4>
       </div>
@@ -27,7 +27,7 @@
            
         </ion-list>
         <div text-center>
-        <button ion-button color="both" small type = "submit" [disabled]="!reg.valid"> Continue </button>
+          <button ion-button color="pale" full type = "submit" [disabled]="!reg.valid"> Continue </button>
         </div>
       </form>
     </ion-content>

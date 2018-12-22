@@ -1,10 +1,19 @@
 page-about {
+
+    .bg{
+        border-radius:5%;
+        background: url("../assets/img/bg.jpg") no-repeat;//#3ebffb;//linear-gradient(10deg,#4E5EFC,#4EE7FC);
+        background-size: cover;
+
+    }
+    
     ion-segment{
         -webkit-text-fill-color:whitesmoke;
     }
 
     #sm{
-        font-size:12px;
+        font-size:14px;
+        margin-top: 5px;
         font-style: italic;
     }
 

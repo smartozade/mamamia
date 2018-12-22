@@ -14,11 +14,15 @@
 
 
 <ion-content padding>
+
+  <ion-refresher (ionRefresh) = 'doRefresh($event)'>
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
  
   <div *ngIf='history' text-center> 
     <div *ngFor = "let hist of history, let i=index" text-wrap (click)="toggleLevel1('idx'+i)" [ngClass]="{active: isLevel1Shown('idx'+i)}">
       <h4>
-        {{hist.topup_date.date}}
+        {{hist.topup_date}}
         <ion-icon color="success" item-right [name]="isLevel1Shown('idx'+i) ? 'arrow-dropdown' : 'arrow-dropright'"></ion-icon>
       </h4>
       <div *ngIf="isLevel1Shown('idx'+i)">    
@@ -28,7 +32,7 @@
       </div>  
     </div>
   </div>
-  <div *ngIf='test'>
+  <div *ngIf='!history' text-center>
     {{test}}
   </div>
 

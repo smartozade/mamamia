@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import {Validators,FormBuilder,FormGroup,FormControl} from '@angular/forms';
 import {HomePage} from '../home/home';
 import {Http, Headers, RequestOptions} from '@angular/http';
+import {ConnectProvider} from '../../providers/connect/connect';
 
 /**
  * Generated class for the VoucherPage page.
@@ -23,7 +24,8 @@ export class VoucherPage {
   public voucher;
   public server:any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl:AlertController, public fm:FormBuilder, public http:Http) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl:AlertController, public fm:FormBuilder, public http:Http,
+    private connect:ConnectProvider) {
     this.code = fm.group({
         voucher: ['', Validators.compose([Validators.minLength(10), Validators.required])],
       });
@@ -37,13 +39,13 @@ export class VoucherPage {
 
   submit(){
     this.recharge = true; 
-     var token = window.localStorage.getItem('userToken');   
+    var token = window.localStorage.getItem('userToken');   
     var obj = { code: this.voucher.value};
     var data = JSON.stringify(obj);
     let headers = new Headers;
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
-     headers.append('Authorization','Bearer '+token);
+    headers.append('Authorization','Bearer '+token);
     let options = new RequestOptions({headers: headers});
     this.http.post(this.server +"api/voucher/redeem", data, options)
     .map(res=>res.json()).subscribe(result=>{
@@ -52,7 +54,7 @@ export class VoucherPage {
     this.navCtrl.push(HomePage);
     },
     err=>{
-      alert('error');
+      this.connect.errorMessage('Unable to connect try again');
       
     });
     

@@ -19,7 +19,7 @@
   <h2 text-center>{{navData}}</h2>
   <div>    
     <ion-label text-center id="con1"></ion-label>
-    <ion-label text-end id="con"> </ion-label>
+    <ion-label text-end id="con"> &nbsp;</ion-label>
   </div>
   <div *ngIf ='incoming' text-center>
     <button id='pick' ion-button large start (click)="accept()"><ion-icon name='call'></ion-icon>
@@ -29,8 +29,31 @@
   </div>
 
   <div *ngIf ='con' text-center>
-     <button id='end' ion-button large end (click)="closeModal()"><ion-icon name='call'></ion-icon>
+    <button *ngIf ='pause' ion-button large start (click)='hold()' color ='tran'>
+        <ion-icon name='pause'></ion-icon>
+    </button>  
+    <button *ngIf ='!pause' ion-button large start (click)='unhold()' color ='tran'>
+      <ion-icon name='play'></ion-icon>
+    </button>    
+    <button ion-button large end color ='tran' >
+      <ion-icon name='apps'></ion-icon>
     </button>
+    <button *ngIf='mic' ion-button large end (click)='mute()' color ='tran' >
+      <ion-icon name='mic'></ion-icon>
+    </button>
+    <button *ngIf='!mic' ion-button large end (click)='unmute()' color ='tran' >
+      <ion-icon name='mic-off'></ion-icon>
+    </button>
+    <button *ngIf='speaker' ion-button large end (click)='speak()' color ='tran'>
+      <ion-icon name='volume-up'></ion-icon>
+    </button>
+    <button *ngIf='!speaker' ion-button large end (click)='speakOut()' color ='tran'>
+        <ion-icon name='volume-down'></ion-icon>
+    </button>
+    <div>
+      <button id='end' ion-button large end (click)="closeModal()"><ion-icon name='call'></ion-icon>
+      </button>
+    </div>
   </div>
 
   <div *ngIf ='calling' text-center>

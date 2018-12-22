@@ -1,18 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
-import {ContactPage} from '../contact/contact';
 import {CallingPage} from '../calling/calling';
 import {ConnectProvider} from '../../providers/connect/connect';
 import { Events } from 'ionic-angular';
 
-import * as SIP from 'sip.js';
-
-/**
- * Generated class for the ContactViewPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+declare var $:any;
 
 @IonicPage()
 @Component({
@@ -23,52 +15,93 @@ export class ContactViewPage {
   public contact:any;
   call:any;
   ua:any;
+  user;
+  pass;
   logs;
   config;
+  verto:any;
+  currentCall:any;
+  callbacks:any; 
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public modal:ModalController, public connect:ConnectProvider, public events:Events) {
     this.contact = navParams.get('detail');
-    var user = localStorage.getItem('username');
-    var pass = localStorage.getItem('password');
-    this.config = this.connect.registration(user,pass);
-    this.ua = new SIP.UA(this.config);
+    this.user = localStorage.getItem('us');
+    this.pass = localStorage.getItem('pa');
+    this.callbacks = {
+      onMessage: function(verto, dialog, msg, data) {
+       console.error("msg ", msg);
+       console.error("data ", data);
+  
+      },
+      onEvent: function(v, e) {
+       console.error("GOT EVENT", e);
+      },
+      onDialogState: (d) => {
+        console.log(d);
+        this.currentCall = d;
+        if(d.state.name =='ringing'){
+          // this.receive();
+        }  else if((d.state.name =='destroy')||(d.state.name =='hangup')){
+          this.events.publish('closed', 'closed');
+        }else if(d.gotAnswer){
+          this.events.publish('accepted', 'accpted'); 
+        }
+      },  
+     };
+     var audio = new Audio('assets/sounds/bell_ring2.mp3');
+    this.config = this.connect.registration(this.user,this.pass);
+    this.verto = new $.verto(this.config,this.callbacks); 
     this.call =  (JSON.parse(window.localStorage.getItem('Calls')));
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ContactViewPage'); 
-  
-
-    
+    console.log('ionViewDidLoad ContactViewPage');     
   }
 
   log(dial){
     this.logs = this.call;
     this.logs.push(dial);
-    
     return this.logs;    
   }
 
-
   tel(){
-    var dial = {message:this.contact.phoneNumbers[0].value};
-    var num = this.contact.phoneNumbers[0].value;
-    var session = this.connect.call(this.ua,'1061', dial);
+    var self = this;
+    var dial = {message:this.contact.number};
+    // if(this.connect.connection){
+    //   this.connect.presentToast('No internet connection');   
+    // }else{
+      window.localStorage.setItem('category','outbound');
+      this.connect.Calls(this.contact.number,this.currentCall,this.verto,this.user);
       var myModal = this.modal.create(CallingPage, dial);
       myModal.onDidDismiss(() => {
-        session.terminate();
+        self.currentCall.hangup();
+        self.currentCall = null;
+      }); 
+      myModal.present();   
+      self.events.subscribe('received', (event_data) => {
+        self.currentCall.answer();
+      }); 
+      self.events.subscribe('onMute', (event_data) => {
+        self.currentCall.mute("off");
+      }); 
+
+      self.events.subscribe('unMute', (event_data) => {
+        self.currentCall.mute("on");
+      }); 
+
+      self.events.subscribe('onHold', (event_data) => {
+        self.currentCall.hold();
+      }); 
+
+      self.events.subscribe('unHold',(event_data)=>{
+        self.currentCall.unhold();
       });
-    myModal.present();
-    this.logs = this.log(num);
-    window.localStorage.setItem('calls', JSON.stringify(this.logs));
-    this.events.publish('log:update', num);
+        this.events.publish('log:update', this.contact.number);
+    // }
   }
 
   ionViewWillLeave(){
     window.localStorage.setItem('calls', JSON.stringify(this.logs)); 
   }
 
-  test(){
-    this.events.publish('log:update', 'olopa');
-  }
 }

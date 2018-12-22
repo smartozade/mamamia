@@ -12,10 +12,10 @@
 
 <ion-content padding>
   <div id="top" text-center>
-    <h4> TopUp your Account with Paypal</h4>
+    <h4> TopUp with Paypal</h4>
   </div> 
 
-  <ion-item>
+  <!-- <ion-item>
       <ion-label>Amount</ion-label>
       <ion-select  interface="popover" [(ngModel)]="amount">
         <div *ngFor = "let credit of credits; let i= index">
@@ -25,6 +25,32 @@
     </ion-item>
   <div text-end>
      <button ion-button primary (click)="topup()"[disabled]="!amount"> TopUp </button> 
-  </div>  
+  </div>   -->
+
+  <form [formGroup]="code" (submit)="submit()" novalidate>
+		<ion-item>
+			<ion-label floating>Amount</ion-label>
+			<ion-select  interface="popover" formControlName="voucher">
+          <ion-option value="{{credit.id}}" *ngFor="let credit of credits; let i= index">{{credit.value}}</ion-option>
+      </ion-select>
+		</ion-item>
+		<ion-item>
+			<ion-label floating>Currency</ion-label>
+			<ion-select  interface='popover' formControlName="currency">
+				<ion-option value="{{currency}}" *ngFor="let currency of currencies">{{currency}}</ion-option>
+			</ion-select>
+		</ion-item>
+		<ion-item>
+			<ion-label floating>Email</ion-label>
+			<ion-input type="text"  formControlName="email"></ion-input>
+		</ion-item>
+		<ion-item>
+			<ion-label floating>Password</ion-label>
+			<ion-input type="password" formControlName="password"></ion-input>
+		</ion-item>
+		<p>
+			<button ion-button block primary type="submit">MAKE PAYMENT</button>
+		</p>
+</form>
 
 </ion-content>

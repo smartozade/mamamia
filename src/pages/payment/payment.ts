@@ -3,8 +3,8 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import {Validators,FormBuilder,FormGroup,FormControl} from '@angular/forms';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {ConfigPage} from '../config/config';
+import {ConnectProvider} from '../../providers/connect/connect';
 
-declare var Stripe;
 
 @IonicPage()
 @Component({
@@ -24,10 +24,11 @@ export class PaymentPage {
   public credits:any;
   public read:any;
   public server:any;
-  stripe = Stripe('pk_test_Aq8i82J5jROFkGMYOLtDgNYz');
+  public mnth;
+  public yrs;
   card: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder,public http:Http,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fm:FormBuilder,public http:Http, private connect:ConnectProvider,
    public alertCtrl:AlertController) {
       this.reg = fm.group({
         cardNumb: ['', Validators.compose([Validators.minLength(16), Validators.required])],
@@ -35,69 +36,21 @@ export class PaymentPage {
         year: ['', Validators.compose([Validators.minLength(4), Validators.required])],
         security: ['', Validators.compose([Validators.minLength(4), Validators.required])],
         name: ['', Validators.compose([Validators.minLength(5), Validators.required])], 
-        email: ['', Validators.compose([  Validators.email, Validators.required])],
       });
 
-      this.credits = JSON.parse(window.localStorage.getItem('credits'));
+    this.name = this.reg.controls['name'];     
+    this.cardNumb = this.reg.controls['cardNumb'];
+    this.month = this.reg.controls['month'];     
+    this.year = this.reg.controls['year'];      
+    this.security = this.reg.controls['security'];   
+    this.mnth = [{day:'Jan', month:'01'},{day:'Feb', month:'02'},{day:'Mar', month:'03'},{day:'Apr', month:'04'},{day:'May', month:'05'},{day:'Jun', month:'06'},{day:'Jul', month:'07'},{day:'Aug', month:'08'},{day:'Sep', month:'09'},{day:'Oct', month:'10'},{day:'Nov', month:'11'},{day:'Dec', month:'12'},];
+    this.yrs = ['2019','2020','2021','2022','2023','2024','2025','2026','2027','2028','2029','2030','2031','2032','2033','2034','2035','2036','2037','2038','2039','2040','2033']; 
+       
+     
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PaymentPage');
-    this.server = localStorage.getItem('server');
-    this.setupStripe();
-    this.getCredits();
-   
-    
-  }
-
-  submit(){
-    alert('welcome');
-  }
-
-  setupStripe(){
-    let elements = this.stripe.elements();
-    var style = {
-      base: {
-        color: '#32325d',
-        lineHeight: '24px',
-        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-        fontSmoothing: 'antialiased',
-        fontSize: '16px',
-        '::placeholder': {
-          color: '#aab7c4'
-        }
-      },
-      invalid: {
-        color: '#fa755a',
-        iconColor: '#fa755a'
-      }
-    };
- 
-    this.card = elements.create('card', { style: style });
- 
-    this.card.mount('#card-element');
- 
-    this.card.addEventListener('change', event => {
-      var displayError = document.getElementById('card-errors');
-      if (event.error) {
-        displayError.textContent = event.error.message;
-      } else {
-        displayError.textContent = '';
-      }
-    });
- 
-    var form = document.getElementById('payment-form');
-    form.addEventListener('submit', event => {
-      event.preventDefault();
-      this.stripe.createToken(this.card).then(result => {
-        if (result.error) {
-          var errorElement = document.getElementById('card-errors');
-          errorElement.textContent = result.error.message;
-        } else {
-          this.creditPay(result.token);
-        }
-      });
-    });
+    this.credits = JSON.parse(window.localStorage.getItem('credits'));
   }
 
   getCredits(){
@@ -114,18 +67,18 @@ export class PaymentPage {
         var test = JSON.stringify(this.credits);
         window.localStorage.setItem('credits',test);
       } else{
-        alert('cant load UcallTel Credits ');
+        this.connect.errorMessage('Unable access UcallTel Credits ');
       } 
     },
       err=>{
-      alert('unable to connect credits');
+      console.log('unable to connect please try again');
       })
 
-  }
+  }  
 
-  creditPay(stp){
+  submit(){
     var token = window.localStorage.getItem('userToken');  
-    var obj = {credit: this.amount, payment_method:'stripe', stripe_token:stp};
+    var obj = {credit: this.name.value, payment_method:'stripe', exp_month:this.month.value,exp_year:this.year.value,number:this.cardNumb.value,cvc:this.security.value};
     var data = JSON.stringify(obj);
     console.log(data);
     let headers = new Headers;
@@ -135,15 +88,21 @@ export class PaymentPage {
     let options = new RequestOptions({headers: headers});
     this.http.post(this.server +"api/credits/topups", data, options)
     .map(res=>res.json()).subscribe(result=>{
-      this.read = result.data;
-      alert(this.read.message);
+      console.log(result.error);
+      this.read = result.data||result.error;
+      this.connect.showAlert('Payment Message',this.read.message);
       this.navCtrl.push(ConfigPage);
     },
     err=>{
-      alert('error');
+     this.connect.errorMessage('unable to connect please try again');
     });
-
   }
+
+  ionViewWillEnter(){
+    this.server = window.localStorage.getItem('server');
+    this.getCredits();  
+  }
+
  
 }
 

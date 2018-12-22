@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import {Validators,FormBuilder} from '@angular/forms';
 import {Http} from '@angular/http';
 
-import 'rxjs/add/operator/map';
 
 /**
  * Generated class for the HistoryPage page.
@@ -17,23 +17,34 @@ import 'rxjs/add/operator/map';
   templateUrl: 'history.html',
 })
 export class HistoryPage {
-  public real:any;
-  public trans:any = [];
+  public contact;
+  public message;
+  public reg:any;
+  public email:any;
+  public feedback:any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http:Http) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http:Http, private viewCtrl:ViewController, public fm:FormBuilder) {
+
+    this.contact = navParams.get('contact');
+    this.reg = fm.group({
+      email: ['', Validators.compose([Validators.email, Validators.required])],
+      feedback: ['', Validators.compose([Validators.minLength(10), Validators.required])],  
+    });
+    
+    this.email = this.reg.controls['email'];     
+    this.feedback = this.reg.controls['feedback'];      
   }
+
 
   ionViewDidLoad() {
-     this.http.get("http://ucalltel.telvida.com/v2//accountActivityHistory")
-    .map(res=>res.json()).subscribe(result=>{
-     this.real = (result.historyData);
-     for(var h=0; h<this.real.length; h++){
-       this.trans.push(this.real[h]);
-      }
-    },
-    err=>{
-          alert('Error from ucalltel server');
-    });  
+    console.log('ionViewDidLoad historyPage');
   }
 
+  close(){
+    this.viewCtrl.dismiss();
+  }
+
+  submit(){
+    
+  }
 }

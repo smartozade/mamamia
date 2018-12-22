@@ -1,13 +1,12 @@
 <ion-header>
   <ion-navbar>
-      <ion-item id="user">
-        <ion-avatar item-start>
-          <img src='{{photo}}'>
-        </ion-avatar>
-         <div *ngIf='size'>
-          <p>Username: {{username}}</p> 
-        </div> 
-      </ion-item>   
+    <ion-item id="user">
+      <ion-avatar item-start>
+        <img src='{{photo}}'>
+      </ion-avatar>
+      <p text-center>{{username}}</p> 
+      <!-- <ion-icon name="notifications" tappable (click)="notification()" item-end></ion-icon> -->
+    </ion-item> 
   </ion-navbar>
 </ion-header>
 
@@ -37,12 +36,11 @@
         </h6>
       </h2>    
       <ion-icon color="success" item-right [name]="isLevel1Shown('idx'+i) ? 'arrow-dropdown' : 'arrow-dropright'"></ion-icon>    
-     </div> 
-   
+     </div>    
   </ion-list> 
 
   <ion-list>
-    <button ion-item>
+    <button ion-item (click)='setting()'>
       <ion-avatar item-start>
         <ion-icon name='construct'></ion-icon>
       </ion-avatar>
@@ -59,17 +57,6 @@
       </ion-avatar>
       <h2>Payment Information</h2>
       <p>Payment Transactions</p>
-      <ion-icon name="arrow-dropright" item-right ></ion-icon>
-    </button>
-  </ion-list> 
-
-  <ion-list>
-    <button ion-item (click)='notification()'>
-      <ion-avatar item-start>
-        <ion-icon name='calendar'></ion-icon>
-      </ion-avatar>
-      <h2>Notifications</h2>
-      <p>Activities on your Ucalltel App</p>
       <ion-icon name="arrow-dropright" item-right ></ion-icon>
     </button>
   </ion-list> 

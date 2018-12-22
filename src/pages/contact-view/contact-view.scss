@@ -1,9 +1,23 @@
 page-contact-view {
     img{
-        margin-left: 25%;
-        border-radius:40%;
-        width: 150px;
-        height: 150px;
+       
+        border-radius:50%;
+        width: 100px;
+        height: 100px;
+    }
+
+    ion-card{
+        background-color: brown;
+        position: relative;
+        text-align: center;
+        align-content: center;
+        margin-top: 10px;
+    }
+
+    ion-card img{
+      border-radius:50%;
+        width: 100px;
+        height: 100px;   
     }
 
 }
